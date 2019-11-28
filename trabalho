@@ -1,29 +1,119 @@
+from random import *
+import timeit
+
 class main:
 
-    def cycleSort(self, array):
-        writes = 0
+    def __init__(self):
+        self.__vector = []
 
+        #self.random(10)
+        #self.near_sort(10)
+        #self.few_unique(10)
+        #self.sort(10)
+        #self.reversed(10)
+
+        time_start = timeit.default_timer()
+
+        #self.bubble_sort(self.__vector)
+        #self.insertion_sort(self.__vector)
+        #self.selection_sort(self.__vector)
+
+        #self.cycle_sort(self.__vector)
+        #self.bucket_sort(self.__vector)
+        #self.radix_sort(self.__vector)
+
+        time_end = timeit.default_timer()
+        print('Complete Process\nTime: %f' % (time_end - time_start))
+
+
+
+# set_vector #############################################################
+
+    def random(self, n):
+        for i in range(0, n, 1):
+            self.__vector.append(randint(0, 9))
+
+
+    def near_sort(self, n):
+        self.sort(n)
+
+        for i in range(0, len(self.__vector)-1, 1):
+            j = randint(0, 10)
+            if j is 10:
+                k = randint(0, len(self.__vector)-1)
+                self.__vector[i], self.__vector[k] = self.__vector[k], self.__vector[i]
+
+
+    def few_unique(self,n):
+        for i in range(0, n, 1):
+            self.__vector.append(randint(0, 3))
+
+
+    def sort(self,n):
+        self.random(n)
+        self.__vector = sorted(self.__vector)
+
+
+    def reversed(self, n):
+        self.random(n)
+        self.__vector = sorted(self.__vector, reverse=True)
+
+
+
+# Sorters ###############################################################
+
+
+
+    def bubble_sort(self, array):
+        elements = len(array) - 1
+        sort = False
+        while not sort:
+            sort = True
+            for i in range(elements):
+                if array[i] > array[i + 1]:
+                    array[i], array[i + 1] = array[i + 1], array[i]
+                    sort = False
+        return array
+
+
+    def insertion_sort(self, array):
+        for i in range(1, len(array)):
+            key = array[i]
+            j = i - 1
+            while j >= 0 and key < array[j]:
+                array[j + 1] = array[j]
+                j -= 1
+            array[j + 1] = key
+        return array
+
+
+    def selection_sort(self, array):
+        for i in range(len(array)):
+            min_idx = i
+            for j in range(i + 1, len(array)):
+                if array[min_idx] > array[j]:
+                    min_idx = j
+            array[i], array[min_idx] = array[min_idx], array[i]
+        return array
+
+
+    def cycle_sort(self, array):
 
         for cycleStart in range(0, len(array) - 1):
             item = array[cycleStart]
-
-
             pos = cycleStart
+
             for i in range(cycleStart + 1, len(array)):
                 if array[i] < item:
                     pos += 1
-
-
             if pos == cycleStart:
                 continue
 
             while item == array[pos]:
                 pos += 1
             array[pos], item = item, array[pos]
-            writes += 1
 
             while pos != cycleStart:
-
                 pos = cycleStart
                 for i in range(cycleStart + 1, len(array)):
                     if array[i] < item:
@@ -32,81 +122,55 @@ class main:
                 while item == array[pos]:
                     pos += 1
                 array[pos], item = item, array[pos]
-                writes += 1
-
-        return writes
-
-
-    def bucketSort(self, array):
-        bucket = []
-        for i in range(len(array)):
-            bucket.append([])
-
-        for j in array:
-            index_b = int(j*10)
-            print(index_b)
-            print(j)
-            bucket[index_b].append(j)
-
-        for i in range(len(array)):
-            bucket[i] = sorted(bucket[i])
-        k = 0
-        for i in range(len(array)):
-            for j in range(len(bucket[i])):
-                array[k] = bucket[i][j]
-                k += 1
         return array
 
-    def countingSort(self, array, place):
-        size = len(array)
-        output = [0] * size
-        count = [0] * 10
-        for i in range(0, size):
-            index = array[i] // place
 
-            count[int(index % 10)] += 1
-        for i in range(1, 10):
-            count[i] += count[i - 1]
-        i = size - 1
-        while i >= 0:
-            index = array[i] // place
-            output[count[int(index % 10)] - 1] = array[i]
-            count[int(index % 10)] -= 1
-            i -= 1
-        for i in range(0, size):
-            array[i] = output[i]
+    def bucket_sort(self,array):
+        largest = max(array)
+        length = len(array)
+        size = largest / length
 
-    def radixSort(self, array):
+        buckets = [[] for _ in range(length)]
+        for i in range(length):
+            j = int(array[i] / size)
+            if j != length:
+                buckets[j].append(array[i])
+            else:
+                buckets[length - 1].append(array[i])
+
+        for i in range(length):
+            self.insertion_sort(buckets[i])
+
+        result = []
+        for i in range(length):
+            result = result + buckets[i]
+
+        return result
+
+
+    def radix_sort(self, array):
         max_element = max(array)
         place = 1
         while max_element // place > 0:
-            Main.countingSort(array,place)
+
+            # countingSort
+            size = len(array)
+            output = [0] * size
+            count = [0] * 10
+            for i in range(0, size):
+                index = array[i] // place
+                count[index % 10] += 1
+            for i in range(1, 10):
+                count[i] += count[i - 1]
+            i = size - 1
+            while i >= 0:
+                index = array[i] // place
+                output[count[index % 10] - 1] = array[i]
+                count[index % 10] -= 1
+                i -= 1
+            for i in range(0, size):
+                array[i] = output[i]
+
             place *= 10
-        print(data)
 
 Main = main()
-
-op = int(input("Escolha um metodo:\n1 >>> Cycle Sort\n2 >>> Bucket Sort\n3 >>> Radix Sort\n"))
-array = []
-i = 0
-print("Digite os valores ou -1 para ordenar\n")
-while True:
-    i = float(input(":\t"))
-    if i == -1:
-        break
-    array.append(i)
-
-if op is 1:
-    arr = array
-    n = len(arr)
-    Main.cycleSort(arr)
-    for i in range(0, n):
-        print(arr[i])
-
-elif op is 2:
-    print(Main.bucketSort(array))
-
-elif op is 3:
-    data = array
-    Main.radixSort(data)
-    print(data)
